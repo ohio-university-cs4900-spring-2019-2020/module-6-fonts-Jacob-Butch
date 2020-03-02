@@ -56,12 +56,17 @@ void GLViewModule::onCreate(){
     // setup world text
     this->startingText = "Hit the '/' key to type a message here";
     this->worldText = WOText::New(sharedMM + "/fonts/arial.ttf", 72, this->startingText, "World Text");
+<<<<<<< HEAD
     this->worldText->setColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
+=======
+    this->worldText->setColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
     this->worldText->setSize(30, 10);
     this->worldText->setPosition(20, 0, 20);
     worldLst->push_back(this->worldText);
 
     // make gui
+<<<<<<< HEAD
     this->guiText = WOGUILabel::New(nullptr);
     this->guiText->setText("Press 't' to summon a toilet!");
     this->guiText->setColor(255, 0, 0, 255);
@@ -85,6 +90,31 @@ void GLViewModule::onCreate(){
 
     PxMaterial* gMaterial = this->physics->physics->createMaterial(0.5f, 0.5f, 0.6f);
     PxRigidStatic* groundPlane = PxCreatePlane(*this->physics->physics, PxPlane(PxVec3(0, 0, 1), 0), *gMaterial);
+=======
+    this->guiText = WOGUILabel::New(nullptr);
+    this->guiText->setText("Press 't' to summon a toilet!");
+    this->guiText->setColor(255, 0, 0, 255);
+    this->guiText->setFontSize(30); //font size is correlated with world size
+    this->guiText->setPosition(Vector(0, 1, 0));
+    this->guiText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
+    this->guiText->setFontPath(sharedMM + "/fonts/arial.ttf");
+    worldLst->push_back(this->guiText);
+
+    // make progressbar
+    this->progressBar = ProgressBar::New();
+    worldLst->push_back(this->progressBar->bar);
+    worldLst->push_back(this->progressBar->progress);
+    
+    // setup messenger client
+    if (ManagerEnvironmentConfiguration::getVariableValue("NetServerListenPort") == "12683") {
+        this->client = NetMessengerClient::New("127.0.0.1", "12682");
+    } else {
+        this->client = NetMessengerClient::New("127.0.0.1", "12683");
+    }   
+
+    PxMaterial* gMaterial = this->physics->physics->createMaterial(0.5f, 0.5f, 0.6f);
+    PxRigidStatic* groundPlane = PxCreatePlane(*this->physics->physics, PxPlane(PxVec3(0, 0, 1), 0), *gMaterial);
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
     this->physics->scene->addActor(*groundPlane);
 }
 
@@ -187,7 +217,11 @@ void GLViewModule::loadMap(){
     wo->setPosition(Vector(0, 0, 0));
     wo->setLabel("Sky Box");
     wo->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
+<<<<<<< HEAD
     worldLst->push_back(wo);
+=======
+    worldLst->push_back(wo);
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
 
     ///*
     wo = WO::New(sharedMM + "/models/citytexday_3ds/city_tex_day.3DS", Vector(1, 1, 1), MESH_SHADING_TYPE::mstAUTO);
@@ -300,6 +334,7 @@ void GLViewModule::makeToilet(Vector pos) {
     if (pos == Vector(0, 0, 0)) {
         pos = this->cam != nullptr ? this->cam->getPosition() : Vector(0, 0, 0);
     }
+<<<<<<< HEAD
     PxTransform t = PxTransform(PxVec3(pos.x, pos.y, pos.z));
     PxShape* shape = this->physics->physics->createShape(PxBoxGeometry(2.0f, 2.0f, 2.0f), *this->physics->physics->createMaterial(0.5f, 0.3f, 0.2f));
     PxRigidDynamic* actor = PxCreateDynamic(*this->physics->physics, t, *shape, 10.0f);
@@ -329,10 +364,42 @@ void GLViewModule::makeToilet(Vector pos) {
     } else {
         this->guiText->setText(std::to_string(this->numToilets) + " toilets");
     }
+=======
+    PxTransform t = PxTransform(PxVec3(pos.x, pos.y, pos.z));
+    PxShape* shape = this->physics->physics->createShape(PxBoxGeometry(2.0f, 2.0f, 2.0f), *this->physics->physics->createMaterial(0.5f, 0.3f, 0.2f));
+    PxRigidDynamic* actor = PxCreateDynamic(*this->physics->physics, t, *shape, 10.0f);
+    
+    // Add the item to the physx world
+    WOPhysx* wo = WOPhysx::New(actor, "../mm/models/toilet/model.dae", Vector(15, 15, 15));
+    wo->actor->userData = wo;
+    wo->setPosition(pos);
+    worldLst->push_back(wo);
+    this->physics->scene->addActor(*wo->actor);
+    
+    // Play toilet flush sound :)
+    ISoundManager::getEngine()->play2D("../mm/sounds/toilet.wav");
+
+    // Send new object net message to spawn a new object
+    if (this->client != nullptr && this->client->isTCPSocketOpen()) {
+        NetMsgToilet msg;
+        msg.pos = pos;
+        this->client->sendNetMsgSynchronousTCP(msg);
+    }
+    
+    // Register it to the local storage
+    this->toilets.insert(std::pair(wo, numToilets));
+    numToilets++;
+    if (this->numToilets == 1) {
+        this->guiText->setText(std::to_string(this->numToilets) + " toilet");
+    } else {
+        this->guiText->setText(std::to_string(this->numToilets) + " toilets");
+    }
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
     
 }
 
 /*
+<<<<<<< HEAD
 std::string GLViewModule::getBackground() {
     switch (background) {
     case 0: return "/images/skyboxes/sky_water+6.jpg";
@@ -363,6 +430,38 @@ std::string GLViewModule::getBackground() {
     default:
         background = 0;
         return getBackground();
+=======
+std::string GLViewModule::getBackground() {
+    switch (background) {
+    case 0: return "/images/skyboxes/sky_water+6.jpg";
+    case 1: return "/images/skyboxes/sky_dust+6.jpg";
+    case 2: return "/images/skyboxes/sky_mountains+6.jpg";
+    case 3: return "/images/skyboxes/sky_winter+6.jpg";
+    case 4: return "/images/skyboxes/early_morning+6.jpg";
+    case 5: return "/images/skyboxes/sky_afternoon+6.jpg";
+    case 6: return "/images/skyboxes/sky_cloudy+6.jpg";
+    case 7: return "/images/skyboxes/sky_cloudy3+6.jpg";
+    case 8: return "/images/skyboxes/sky_day+6.jpg";
+    case 9: return "/images/skyboxes/sky_day2+6.jpg";
+    case 10: return "/images/skyboxes/sky_deepsun+6.jpg";
+    case 11: return "/images/skyboxes/sky_evening+6.jpg";
+    case 12: return "/images/skyboxes/sky_morning+6.jpg";
+    case 13: return "/images/skyboxes/sky_morning2+6.jpg";
+    case 14: return "/images/skyboxes/sky_noon+6.jpg";
+    case 15: return "/images/skyboxes/sky_warp+6.jpg";
+    case 16: return "/images/skyboxes/space_Hubble_Nebula+6.jpg";
+    case 17: return "/images/skyboxes/space_gray_matter+6.jpg";
+    case 18: return "/images/skyboxes/space_easter+6.jpg";
+    case 19: return "/images/skyboxes/space_hot_nebula+6.jpg";
+    case 20: return "/images/skyboxes/space_ice_field+6.jpg";
+    case 21: return "/images/skyboxes/space_lemon_lime+6.jpg";
+    case 22: return "/images/skyboxes/space_milk_chocolate+6.jpg";
+    case 23: return "/images/skyboxes/space_solar_bloom+6.jpg";
+    case 24: return "/images/skyboxes/space_thick_rb+6.jpg";
+    default:
+        background = 0;
+        return getBackground();
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
     }
 }
 */

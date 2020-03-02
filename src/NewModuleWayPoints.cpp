@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "WOWayPointAbstract.h"
 #include "NewModuleWayPoints.h"
 #include "GLViewModule.h"
@@ -28,4 +29,36 @@ void WOWP1::onTrigger()
    std::cout << "WOWP1 waypoint Triggered!" << std::endl << std::endl;
 }
 
+=======
+#include "WOWayPointAbstract.h"
+#include "NewModuleWayPoints.h"
+#include "GLViewModule.h"
+#include <vector>
+#include <iostream>
+
+namespace Aftr
+{
+
+WOWP1* WOWP1::New(const WayPointParametersBase& params, float radius )
+{
+   WOWP1* ptr = new WOWP1(params, radius);
+   ptr->onCreate();
+   return ptr;
+}
+
+WOWP1::WOWP1(const WayPointParametersBase& params, float radius
+             ) : WOWayPointSpherical( params, radius ), IFace( this )
+{
+}
+
+WOWP1::~WOWP1()
+{
+}
+
+void WOWP1::onTrigger()
+{
+   std::cout << "WOWP1 waypoint Triggered!" << std::endl << std::endl;
+}
+
+>>>>>>> 824740c3fc2ea164db81d1212f41b04fbc846812
 } //namespace Aftr
